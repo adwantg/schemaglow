@@ -19,10 +19,10 @@ usage() {
 Usage: ./release.sh <version> [--no-upload] [--no-git] [--skip-quality]
 
 Examples:
-  ./release.sh 0.1.0
-  ./release.sh 0.1.0 --no-upload
-  ./release.sh 0.1.0 --no-git
-  ./release.sh 0.1.0 --skip-quality --no-upload
+  ./release.sh 1.0.0
+  ./release.sh 1.0.0 --no-upload
+  ./release.sh 1.0.0 --no-git
+  ./release.sh 1.0.0 --skip-quality --no-upload
 USAGE
 }
 
@@ -59,7 +59,7 @@ for arg in "$@"; do
 done
 
 if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-  echo -e "${RED}Error: Invalid version format. Use X.Y.Z (example: 0.1.0)${NC}"
+  echo -e "${RED}Error: Invalid version format. Use X.Y.Z (example: 1.0.0)${NC}"
   exit 1
 fi
 

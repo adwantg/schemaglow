@@ -227,26 +227,6 @@ The automated test suite covers:
 - CLI integration for `inspect`, `snapshot`, `compare`, `diff`, `scan`, and `baseline`
 - Parquet and directory report generation
 
-## Roadmap Status
-
-`v1.0`
-
-- file and snapshot comparison
-- human-readable severity classification
-- JSON, Markdown, and HTML report export
-
-`v1.1`
-
-- GitHub Action and pre-commit packaging
-- better nested diff and ignore-field workflows
-- improved rename heuristics and sample-based ambiguity handling
-
-`v2.0`
-
-- OpenAPI, Avro, and protobuf support
-- directory-wide drift scans
-- baseline contract files committed to repositories
-
 ## Repository Standards
 
 - [CONTRIBUTING.md](./CONTRIBUTING.md)

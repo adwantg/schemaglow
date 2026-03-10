@@ -21,3 +21,4 @@ __all__ = [
 ]
 
 __author__ = "gadwant"
+__version__ = "1.0.0"

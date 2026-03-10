@@ -4,15 +4,26 @@ build-backend = "hatchling.build"
 
 [project]
 name = "schemaglow"
-version = "0.1.0"
-description = "Human-friendly schema diff for CSV, JSON, JSONL, and Parquet."
+version = "1.0.0"
+description = "Human-friendly schema diff and contract drift detection for CSV, JSON, JSONL, Parquet, OpenAPI, Avro, and protobuf."
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
 authors = [{ name = "Goutam Adwant", email = "workwithgoutam@gmail.com" }]
-keywords = ["schema-diff", "parquet", "jsonl", "csv", "cli", "data-quality"]
+keywords = [
+    "schema-diff",
+    "openapi",
+    "avro",
+    "protobuf",
+    "parquet",
+    "json",
+    "jsonl",
+    "csv",
+    "cli",
+    "data-quality",
+]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",

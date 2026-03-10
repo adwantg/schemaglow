@@ -251,7 +251,7 @@ def render_directory_text(report: DirectoryReport) -> str:
 
 def render_directory_json(report: DirectoryReport) -> str:
     try:
-        import orjson  # type: ignore[import-not-found]
+        import orjson
 
         payload = cast(
             bytes,
