@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: "Adwant"
+    given-names: "Goutam"
+    alias: "adwantg"
+title: "SchemaGlow: Human-friendly schema diff for CSV, JSON, JSONL, and Parquet."
+version: "0.1.0"
+date-released: "2026-03-09"
+url: "https://github.com/adwantg/schemaglow"
+repository-code: "https://github.com/adwantg/schemaglow"
+license: MIT
+keywords:
+  - python
+  - schema-diff
+  - parquet
+  - jsonl
+  - csv

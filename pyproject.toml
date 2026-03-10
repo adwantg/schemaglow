@@ -1,0 +1,105 @@
+[build-system]
+requires = ["hatchling>=1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "schemaglow"
+version = "1.0.0
+description = "Human-friendly schema diff for CSV, JSON, JSONL, and Parquet."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Goutam adwant", email = "workwithgoutam@gmail.com" }]
+keywords = [
+    "schema-diff",
+    "parquet",
+    "jsonl",
+    "csv",
+    "cli",
+    "data-quality",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "jinja2>=3.1.0",
+    "pydantic>=2.8.0",
+    "pyarrow>=16.1.0",
+    "pyyaml>=6.0.0",
+    "rich>=13.9.0",
+    "typer>=0.16.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "build>=1.2.0",
+    "mypy>=1.13.0",
+    "pip-audit>=2.8.0",
+    "pre-commit>=4.0.0",
+    "pytest>=8.3.0",
+    "pytest-cov>=6.0.0",
+    "ruff>=0.8.0",
+    "twine>=6.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/adwantg/schemaglow"
+Repository = "https://github.com/adwantg/schemaglow"
+Issues = "https://github.com/adwantg/schemaglow/issues"
+
+[project.scripts]
+schemaglow = "schemaglow.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/schemaglow"]
+core-metadata-version = "2.3"
+
+[tool.hatch.build.targets.sdist]
+core-metadata-version = "2.3"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "C4", "RUF"]
+
+[tool.ruff.lint.per-file-ignores]
+"src/schemaglow/cli.py" = ["B008"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_unused_configs = true
+mypy_path = ["src"]
+
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = ["pyarrow", "pyarrow.*", "yaml"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers --strict-config --cov=schemaglow --cov-report=term-missing"
+xfail_strict = true
+
+[tool.coverage.run]
+source = ["schemaglow"]
+
+[tool.coverage.report]
+fail_under = 90
+show_missing = true
+skip_covered = true

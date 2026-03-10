@@ -1,0 +1,314 @@
+Recommended repo names
+
+Best options, in order:
+	1.	schemaglow
+Clean, memorable, brandable.
+	2.	schema-human-diff
+Very clear, more SEO-friendly, less brandable.
+	3.	driftlens
+Good if you want broader positioning around schema drift.
+	4.	schemadelta
+Solid, but a bit generic.
+	5.	parquet-json-csv-diff
+Only if you want ultra-literal CLI discoverability.
+
+My recommendation: schemaglow for the repo/package, with tagline:
+
+Human-friendly schema diff for CSV, JSON, JSONL, and Parquet.
+
+⸻
+
+The exact competitor gap
+
+The strongest gap is this:
+
+Existing tools either validate, inspect, or diff technical schemas — but very few explain file/schema change impact in a way that is immediately useful in PR review, CI, or human approval workflows.
+
+Here’s the landscape:
+	•	Great Expectations focuses on defining and enforcing expectations in pipelines. It is strong for validation, but it is not built as a lightweight “compare these two files/snapshots and explain what changed” CLI.  ￼
+	•	OpenMetadata supports checks like column count, column existence, and exact column-set matching for drift detection, but it is part of a much larger metadata/data-quality platform, not a tiny standalone developer tool.  ￼
+	•	qsv is excellent for viewing and wrangling CSV/JSON/Parquet, but it is not positioned as a schema compatibility explainer.  ￼
+	•	parquet-tools supports schema-oriented workflows for Parquet and related formats, but it is more of a utility layer than a human-centered diff reviewer.  ￼
+	•	json-schema-diff exists, but it is narrowly about JSON/schema-guided diffs and not the broader “data-file schema drift for engineers” workflow.  ￼
+	•	DBDiff is for database schema diff and migration generation, which is adjacent but not the same problem as comparing data-file schemas across CSV/JSON/Parquet.  ￼
+	•	GitHub community discussions around Parquet diffs still suggest custom scripts or custom diff drivers, which is a good sign that the problem is not elegantly solved yet.  ￼
+	•	Even the JSON Schema community is explicitly discussing the lack of an official, complete compatibility-checking CLI with human-readable impact reporting.  ￼
+
+In one sentence
+
+The gap is not “schema diff exists nowhere”; the gap is “no simple, polished, format-agnostic schema diff tool explains breaking vs safe changes for humans.”  ￼
+
+⸻
+
+Best positioning statement
+
+Position SchemaGlow as:
+
+A git-friendly schema diff tool that tells humans whether a data-file change is safe, risky, or breaking.
+
+That is stronger than “schema diff tool,” because it emphasizes:
+	•	human readability
+	•	compatibility judgment
+	•	CI / PR usage
+	•	file-first workflow
+
+⸻
+
+MVP features for v1
+
+Keep v1 tight. I would ship only these:
+
+1) Compare two files or two saved snapshots
+
+Example:
+schemaglow diff old.parquet new.parquet
+schemaglow diff baseline.jsonl candidate.jsonl
+
+Supported in v1:
+	•	CSV
+	•	JSON
+	•	JSONL
+	•	Parquet
+
+2) Infer schema and print human-readable changes
+
+Output like:
+SchemaGlow Report
+
+SAFE
++ added optional column: campaign_id (string)
+WARNING
+~ widened type: user_id (int -> string)
+BREAKING
+- removed column: order_total
+BREAKING
+~ nullability changed: created_at (nullable -> required)
+
+3) Compatibility classification
+
+Three labels:
+	•	SAFE
+	•	WARNING
+	•	BREAKING
+
+This is the core differentiator.
+
+4) Machine-readable output
+schemaglow diff a.csv b.csv --format json
+
+Useful for CI and GitHub Actions.
+
+5) Markdown / HTML report export
+schemaglow diff a.parquet b.parquet --report markdown
+
+Exact v1 compatibility rules
+
+Ship a small but high-value rule set first.
+
+SAFE
+	•	new nullable / optional column added
+	•	column order changed only
+	•	metadata-only changes
+	•	integer widened to float or broader numeric type, if configured as tolerant
+
+WARNING
+	•	type widened in ambiguous way
+	•	enum-like value shape appears changed from sample inference
+	•	column renamed heuristically but not proven
+	•	nested object shape expanded
+
+BREAKING
+	•	column removed
+	•	nullable → required
+	•	incompatible type change like string → int
+	•	nested field removed
+	•	array element type changed incompatibly
+
+This gives the tool real semantic value instead of dumb text diffing. The JSON Schema compatibility proposal is a useful signal here because it highlights the kinds of rules users actually care about: type changes, required-field changes, enum changes, and constraints.  ￼
+
+⸻
+
+CLI design
+
+I’d keep the CLI very simple.
+
+Commands
+schemaglow diff old_file new_file
+schemaglow inspect file
+schemaglow snapshot file -o schema.json
+schemaglow compare old_schema.json new_schema.json
+
+Useful flags
+--format text|json
+--report markdown|html
+--sample 10000
+--ignore-order
+--ignore-fields regex
+--strict
+--rename-heuristics
+
+What makes SchemaGlow different
+
+Your strongest differentiators should be:
+
+1) File-format agnostic
+
+Most nearby tools are tied to one ecosystem or one format. SchemaGlow should feel like one CLI for CSV, JSON, JSONL, and Parquet.  ￼
+
+2) Human-first output
+
+Not just “different.”
+It should answer:
+	•	what changed
+	•	whether it matters
+	•	why it matters
+
+3) Git / PR friendly
+
+GitHub users are still discussing custom Parquet diff drivers manually, which means a ready-made tool plus markdown report has real value.  ￼
+
+4) Lightweight
+
+Unlike GX or OpenMetadata, this should be:
+	•	local-first
+	•	no server
+	•	no metadata platform
+	•	no heavy setup  ￼
+
+⸻
+
+Recommended tech stack
+
+For fastest MVP:
+	•	Python 3.11+
+	•	Typer for CLI
+	•	Rich for terminal output
+	•	Pydantic for internal schema model
+	•	PyArrow for Parquet
+	•	orjson for JSON/JSONL
+	•	csv / pandas optional
+	•	jinja2 for HTML report templates
+
+Why Python
+
+Because Parquet + CSV + JSON handling is easy, local dev is fast, and shipping a CLI to PyPI is straightforward.
+
+⸻
+
+Suggested internal architecture
+
+Core modules
+	•	loader/
+	•	csv loader
+	•	json loader
+	•	jsonl loader
+	•	parquet loader
+	•	infer/
+	•	schema inference
+	•	nullability detection
+	•	nested field flattening
+	•	compare/
+	•	field matching
+	•	compatibility rules
+	•	rename heuristics
+	•	render/
+	•	terminal renderer
+	•	json renderer
+	•	markdown/html renderer
+	•	models/
+	•	field definition
+	•	type model
+	•	diff event model
+
+⸻
+
+Ideal README hook
+
+Use something like this at the top:
+# SchemaGlow
+
+Human-friendly schema diff for CSV, JSON, JSONL, and Parquet.
+
+SchemaGlow compares two data files or schema snapshots and tells you what changed, whether it is safe, and what might break.
+
+## Why?
+Git diffs are bad at data files.
+Data quality platforms are too heavy.
+SchemaGlow gives you a fast local answer:
+
+- added optional column → SAFE
+- removed field → BREAKING
+- type widened → WARNING
+
+## Example
+schemaglow diff old.parquet new.parquet --report markdown
+
+Best first launch wedge
+
+Don’t market it as “universal schema drift platform.”
+
+Market it as:
+
+The easiest way to review schema changes in Parquet/CSV/JSON files in pull requests.
+
+That wedge is much sharper and easier to demo.
+
+⸻
+
+v1 to v2 roadmap
+
+v1
+	•	compare files
+	•	compare saved schema snapshots
+	•	safe/warning/breaking labels
+	•	markdown/html/json outputs
+
+v1.1
+	•	GitHub Action
+	•	pre-commit hook
+	•	.gitattributes / git diff integration for Parquet and JSONL
+
+v1.2
+	•	rename heuristics
+	•	nested diff improvements
+	•	ignore noisy/generated fields
+	•	sample-based enum/shape detection
+
+v2
+	•	OpenAPI / Avro / protobuf support
+	•	directory-wide schema drift scan
+	•	“baseline contract” files committed to repo
+
+⸻
+
+What I would not do initially
+
+Avoid these in the first release:
+	•	full web UI
+	•	server mode
+	•	database connectors
+	•	auto-migration generation
+	•	full Great Expectations-style validation framework
+	•	ML/AI features
+
+They make the tool heavier and blur the positioning.
+
+⸻
+
+My blunt recommendation
+
+Build schemaglow as:
+
+A Python CLI that compares two CSV/JSON/JSONL/Parquet files and produces a human-readable SAFE / WARNING / BREAKING schema report for PRs and CI.
+
+That is narrow enough for a 1–2 weekend MVP, but differentiated enough to get attention.
+
+The single best demo:
+schemaglow diff data_old.parquet data_new.parquet --report markdown
+
+and then show:
+	•	terminal output
+	•	generated markdown report
+	•	GitHub Action comment in a PR
+
+That is the right “aha moment.”
